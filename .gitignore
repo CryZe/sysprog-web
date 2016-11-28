@@ -1,0 +1,4 @@
+target
+compiler/*/debug
+compiler/*/lib
+compiler/sharedlib

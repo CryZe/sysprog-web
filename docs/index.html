@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Balls</title>
+        <style>
+            .ball {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                background-image: -webkit-radial-gradient(10px 10px, circle cover, hsla(125, 60%, 50%, 1), hsla(125, 70%, 15%, 1));
+                background-image: radial-gradient(at 10px 10px, hsla(125, 60%, 50%, 1) 0%, hsla(125, 70%, 15%, 1) 100%);
+            }
+            .domain {
+                background-color: hsl(125, 5%, 95%);
+                width: 600px;
+                height: 600px;
+            }
+            button {
+                width: 100px;
+                height: 50px;
+                margin-left: 10px;
+            }
+        </style>
+        <script type="text/javascript" src="sysprog.js"></script>
+        <script type="text/javascript">
+            function compile() {
+                console.log("Compiling...");
+                parse = Module.cwrap('parse', 'string', ['string']);
+                var code = document.getElementById("code").value;
+                var asm = parse(code);
+                format = Module.cwrap('format_asm', 'string', ['string']);
+                asm = format(asm);
+                document.getElementById("asm").value = asm;
+            }
+
+            function runASM() {
+                console.log("Running...");
+                interpret = Module.cwrap('interpret', 'string', ['string']);
+                var asm = document.getElementById("asm").value;
+                var result = interpret(asm);
+                document.getElementById("result").value = result;
+            }
+        </script>
+    </head>
+    <body>
+        <p>
+            <textarea id="code" cols="80" rows="40">/*
+   Heron-Verfahren zur Berechnung der Quadratwurzel
+*/
+
+int a;
+int xn;
+int xn1;
+read(a);
+xn = 0;
+xn1 = (a + 1) / 2;
+while (xn =!= xn1)
+{
+	xn = xn1;
+	xn1 = (xn + (a / xn)) / 2;
+};
+print(xn);</textarea>
+            <textarea id="asm" cols="20" rows="40"></textarea>
+        </p>
+        <p>
+            <button onclick="compile();">Compile</button>
+            <button onclick="runASM();">Run</button>
+        </p>
+        <p><textarea id="result" cols="105" rows="10" readonly></textarea></p>
+    </body>
+</html>

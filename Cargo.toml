@@ -1,0 +1,8 @@
+[package]
+name = "sysprog"
+version = "0.1.0"
+authors = ["Christopher Serr <christopher.serr@gmail.com>"]
+
+[dependencies]
+libc = "*"
+lazy_static = "*"

@@ -1,0 +1,41 @@
+
+#ifndef TokenType_H_
+#define TokenType_H_
+/*
+ * State.h
+ *
+ *  Created on: 30.10.2013
+ *  Author: Henrik Hierl
+ */
+enum TokenType {
+    INTEGER,
+    IDENTIFIER,
+    KEYWORD_IF,
+    KEYWORD_ELSE,
+    KEYWORD_WHILE,
+    KEYWORD_INT,
+    KEYWORD_PRINT,
+    KEYWORD_READ,
+    PLUS_SIGN,
+    HYPHEN_SIGN,
+    SLASH_SIGN,
+    STAR_SIGN,
+    LESS_THAN_SIGN,
+    MORE_THAN_SIGN,
+    EQUALS_SIGN,
+    DOUBLE_EQUALS_SIGN,
+    NOT_SIGN,
+    AND_SIGN,
+    SEMICOLON_SIGN,
+    PARENTHESIS_OPEN_SIGN,
+    PARENTHESIS_CLOSE_SIGN,
+    EQUAL_NOT_EQUAL_SIGN,
+    BRACES_OPEN_SIGN,
+    BRACES_CLOSED_SIGN,
+    SQUARE_BRACKET_OPEN_SIGN,
+    SQUARE_BRACKET_CLOSE_SIGN,
+    FILE_END,
+    SPACE_SIGN,
+    ERROR_SIGN
+};
+#endif /* TokenType_H_ */
