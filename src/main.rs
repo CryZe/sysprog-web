@@ -158,7 +158,7 @@ fn find_label_positions<'a>(code: &'a [Instruction<'a>]) -> HashMap<&'a str, usi
         .collect()
 }
 
-fn execute(code: &[Instruction], output: &mut String) -> Result<(), String> {
+fn execute(code: &[Instruction], output: &mut String, debug: bool) -> Result<(), String> {
     use Instruction::*;
 
     let label_positions = find_label_positions(code);
@@ -263,7 +263,11 @@ fn execute(code: &[Instruction], output: &mut String) -> Result<(), String> {
             NOP | Label(_) => {}
             STP => break,
         }
-        println!("{} {:?}", instruction, stack);
+        if debug {
+            writeln!(output, "{} {:?}", instruction, stack).unwrap();
+        } else {
+            println!("{} {:?}", instruction, stack);
+        }
     }
 
     Ok(())
@@ -293,7 +297,7 @@ pub unsafe extern "C" fn format_asm(asm: *const c_char) -> *const c_char {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn interpret(asm: *const c_char) -> *const c_char {
+pub unsafe extern "C" fn interpret(asm: *const c_char, debug: bool) -> *const c_char {
     let mut output = OUTPUT.lock().unwrap();
 
     output.clear();
@@ -304,7 +308,7 @@ pub unsafe extern "C" fn interpret(asm: *const c_char) -> *const c_char {
     let instructions = parse_asm(&asm);
     match instructions {
         Ok(instructions) => {
-            if let Err(e) = execute(&instructions, &mut output) {
+            if let Err(e) = execute(&instructions, &mut output, debug) {
                 *output = e;
             }
         }

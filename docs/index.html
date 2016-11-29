@@ -10,6 +10,9 @@
                 height: 50px;
                 margin-left: 10px;
             }
+            input {
+                margin-left: 10px;
+            }
         </style>
         <script type='text/javascript'>
             var Module = {};
@@ -49,9 +52,15 @@
 
             function runASM() {
                 console.log("Running...");
-                interpret = Module.cwrap('interpret', 'string', ['string']);
+                interpret = Module.cwrap('interpret', 'string', ['string', 'number']);
                 var asm = document.getElementById("asm").value;
-                var result = interpret(asm);
+                var debug = document.getElementById("debug");
+                if (debug.checked) {
+                    debug = 1;
+                } else {
+                    debug = 0;
+                }
+                var result = interpret(asm, debug);
                 document.getElementById("result").value = result;
             }
         </script>
@@ -79,6 +88,10 @@ print(xn);</textarea>
         <p>
             <button onclick="compile();">Compile</button>
             <button onclick="runASM();">Run</button>
+            <label>
+                <input type="checkbox" id="debug" value="debug">
+                Debug
+            </label>
         </p>
         <p><textarea id="result" cols="105" rows="10" readonly></textarea></p>
     </body>
