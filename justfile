@@ -17,4 +17,4 @@ wasm:
     @cp target/wasm32-unknown-emscripten/release/*.wasm* docs/.
 
 cpp:
-    cd compiler && make && cd ..
+    make -C compiler
