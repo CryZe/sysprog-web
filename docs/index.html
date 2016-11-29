@@ -50,7 +50,9 @@
                     var asm = parse(code);
                     asm = format(asm);
                     document.getElementById("asm").value = asm;
+                    document.getElementById("result").value = "Compilation succeeded.";
                 } catch (e) {
+                    document.getElementById("asm").value = "";
                     document.getElementById("result").value = "Compilation failed.";
                 }
             }
