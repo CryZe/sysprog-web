@@ -15,25 +15,28 @@
             }
         </style>
         <script type='text/javascript'>
-            var Module = {};
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'sysprog.wasm', true);
             xhr.responseType = 'arraybuffer';
             xhr.onload = function() {
-                Module.wasmBinary = xhr.response;
+                var config = { wasmBinary: xhr.response };
                 var codeXHR = new XMLHttpRequest();
                 codeXHR.open('GET', 'sysprog.js', true);
                 codeXHR.onload = function() {
-                var code = codeXHR.responseText;
-                var blob = new Blob([code], {type: 'text/javascript'});
-                codeXHR = null;
-                var src = URL.createObjectURL(blob);
-                var script = document.createElement('script');
-                script.src = URL.createObjectURL(blob);
-                script.onload = function() {
-                    URL.revokeObjectURL(script.src);
-                };
-                document.body.appendChild(script);
+                    var code = codeXHR.responseText;
+                    var blob = new Blob([code], {type: 'text/javascript'});
+                    codeXHR = null;
+                    var src = URL.createObjectURL(blob);
+                    var script = document.createElement('script');
+                    script.src = URL.createObjectURL(blob);
+                    script.onload = function() {
+                        URL.revokeObjectURL(script.src);
+                        var sysprog = SysProg(config);
+                        parse = sysprog.cwrap('parse', 'string', ['string']);
+                        format = sysprog.cwrap('format_asm', 'string', ['string']);
+                        interpret = sysprog.cwrap('interpret', 'string', ['string', 'number']);
+                    };
+                    document.body.appendChild(script);
                 }
                 codeXHR.send(null);
             };
@@ -42,17 +45,18 @@
         <script type="text/javascript">
             function compile() {
                 console.log("Compiling...");
-                parse = Module.cwrap('parse', 'string', ['string']);
                 var code = document.getElementById("code").value;
-                var asm = parse(code);
-                format = Module.cwrap('format_asm', 'string', ['string']);
-                asm = format(asm);
-                document.getElementById("asm").value = asm;
+                try {
+                    var asm = parse(code);
+                    asm = format(asm);
+                    document.getElementById("asm").value = asm;
+                } catch (e) {
+                    document.getElementById("result").value = "Compilation failed.";
+                }
             }
 
             function runASM() {
                 console.log("Running...");
-                interpret = Module.cwrap('interpret', 'string', ['string', 'number']);
                 var asm = document.getElementById("asm").value;
                 var debug = document.getElementById("debug");
                 if (debug.checked) {

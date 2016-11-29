@@ -1,5 +1,5 @@
-standard_flags = "-L compiler/Parser/debug/ -lParserTest -s EXPORTED_FUNCTIONS=['_interpret','_parse','_format_asm']"
-debug_flags = standard_flags + " -g -s ASSERTIONS=2 -s DEMANGLE_SUPPORT=1"
+standard_flags = "-L compiler/Parser/debug/ -lParserTest -s EXPORTED_FUNCTIONS=['_interpret','_parse','_format_asm'] -s MODULARIZE=1 -s EXPORT_NAME='SysProg'"
+debug_flags = standard_flags + " -g -s ASSERTIONS=2 -s DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1"
 release_flags = standard_flags + " -O3"
 wasm_flags = "-s BINARYEN_METHOD='native-wasm'"
 

@@ -178,7 +178,6 @@ Statement1::~Statement1() {
 			}
 		}
 	delete token;
-	cout<<"delete Statement1"<<endl;
 }
 
 void Statement1::parsetree(Scanner* scan){

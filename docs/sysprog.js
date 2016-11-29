@@ -28,6 +28,10 @@ var fc=[TI,vm,Zm,yf,Ef,pf,tf,TI];var gc=[PL,CJ,Ir,Ko,Kf,yk,Vg,Fu,Lv,Nj,MA,CJ,_r,
 };
 
 //^wasm.js
+var SysProg = function(SysProg) {
+  SysProg = SysProg || {};
+  var Module = SysProg;
+
 /*
  * Copyright 2015 WebAssembly Community Group participants
  *
@@ -387,7 +391,7 @@ function integrateWasmJS(Module) {
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
 var Module;
-if (!Module) Module = (typeof Module !== 'undefined' ? Module : null) || {};
+if (!Module) Module = (typeof SysProg !== 'undefined' ? SysProg : null) || {};
 
 // Sometimes an existing Module object exists with properties
 // meant to overwrite the default module functionality. Here
@@ -1862,7 +1866,7 @@ function _emscripten_asm_const_iii(code, a0, a1) {
 
 STATIC_BASE = 1024;
 
-STATICTOP = STATIC_BASE + 43264;
+STATICTOP = STATIC_BASE + 43248;
   /* global initializers */  __ATINIT__.push({ func: function() { __GLOBAL__I_000101() } }, { func: function() { __GLOBAL__sub_I_iostream_cpp() } });
   
 
@@ -1871,7 +1875,7 @@ memoryInitializer = Module["wasmJSMethod"].indexOf("asmjs") >= 0 || Module["wasm
 
 
 
-var STATIC_BUMP = 43264;
+var STATIC_BUMP = 43248;
 
 /* no memory initializer */
 var tempDoublePtr = STATICTOP; STATICTOP += 16;
@@ -6447,3 +6451,6 @@ run();
 
 
 
+
+  return SysProg;
+};
