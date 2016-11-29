@@ -8,6 +8,13 @@ build:
     @cp target/asmjs-unknown-emscripten/release/*.js* docs/.
 
 debug:
-    cd compiler && make && cd ..
     cargo rustc --target asmjs-unknown-emscripten -- -C link-args="{{debug_flags}}"
     @cp target/asmjs-unknown-emscripten/debug/*.js* docs/.
+
+wasm:
+    cargo rustc --release --target wasm32-unknown-emscripten -- -C link-args="{{release_flags}}"
+    @cp target/wasm32-unknown-emscripten/release/*.js* docs/.
+    @cp target/wasm32-unknown-emscripten/release/*.wasm* docs/.
+
+cpp:
+    cd compiler && make && cd ..

@@ -30,25 +30,25 @@ OBJSFORSCANNERLIB =  \
 
 # linken der Object-files under shared libraries
 #makeTestScanner: $(OBJDIR)/Scanner.o $(OBJDIR)/TestScanner.o
-#	em++ -g $(OBJDIR)/Scanner.o $(OBJDIR)/TestScanner.o -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
+#	em++ -g4 $(OBJDIR)/Scanner.o $(OBJDIR)/TestScanner.o -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
 #
 #
 #
 ## compilieren der source-files
 #$(OBJDIR)/Scanner.o :  $(SRCDIR)/Scanner.cpp
 #	@echo "em++ $*.cpp"
-#	em++ -g  -c -Wall  -o $(OBJDIR)/Scanner.o  $(SRCDIR)/Scanner.cpp
+#	em++ -g4  -c -Wall  -o $(OBJDIR)/Scanner.o  $(SRCDIR)/Scanner.cpp
 #
 #$(OBJDIR)/TestScanner.o :  $(SRCDIR)/TestScanner.cpp
 #	@echo "em++ $*.cpp"
-#	em++ -g  -c -Wall  -o $(OBJDIR)/TestScanner.o  $(SRCDIR)/TestScanner.cpp
+#	em++ -g4  -c -Wall  -o $(OBJDIR)/TestScanner.o  $(SRCDIR)/TestScanner.cpp
 #
 
 
 
 #Variante  mit guten Kenntnissen
 makeTestScanner: $(OBJS)
-	em++ -g $^ -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
+	em++ -g4 $^ -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
 
 
 
@@ -57,7 +57,7 @@ makeTestScanner: $(OBJS)
 
 $(OBJDIR)/%.o :  $(SRCDIR)/%.cpp
 	@echo "em++ $*.cpp"
-	em++ -g  -c -Wall  -o $@  $<
+	em++ -g4  -c -Wall  -o $@  $<
 
 #
 # $@ name des object files
@@ -84,5 +84,5 @@ ScannerLib:$(OBJSFORSCANNERLIB)
 $(LIBDIR)/%.o :  $(SRCDIR)/%.cpp
 	@mkdir -p `dirname $(OBJDIR)/$*.o`
 	@echo "em++ $*.cpp"
-	em++ -g  -c -fPIC  -o $@  $<
+	em++ -g4  -c -fPIC  -o $@  $<
 

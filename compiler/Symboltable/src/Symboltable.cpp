@@ -8,6 +8,14 @@
 using namespace std;
 
 Symboltable::Symboltable() {
+	// Upcoming code expects everything to be
+	// initialized with 0.
+	memset(HashMap, 0, sizeof(HashMap));
+	freeP = nullptr;
+	freeSpace = 0;
+	Stringtable = nullptr;
+	rootPointer = current = last = nullptr;
+
 	Stringtable = GetNewStringtable();
 	// Set keywords
 

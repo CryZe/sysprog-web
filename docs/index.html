@@ -3,28 +3,39 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Balls</title>
+        <title>SysProg Compiler</title>
         <style>
-            .ball {
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                position: absolute;
-                background-image: -webkit-radial-gradient(10px 10px, circle cover, hsla(125, 60%, 50%, 1), hsla(125, 70%, 15%, 1));
-                background-image: radial-gradient(at 10px 10px, hsla(125, 60%, 50%, 1) 0%, hsla(125, 70%, 15%, 1) 100%);
-            }
-            .domain {
-                background-color: hsl(125, 5%, 95%);
-                width: 600px;
-                height: 600px;
-            }
             button {
                 width: 100px;
                 height: 50px;
                 margin-left: 10px;
             }
         </style>
-        <script type="text/javascript" src="sysprog.js"></script>
+        <script type='text/javascript'>
+            var Module = {};
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'sysprog.wasm', true);
+            xhr.responseType = 'arraybuffer';
+            xhr.onload = function() {
+                Module.wasmBinary = xhr.response;
+                var codeXHR = new XMLHttpRequest();
+                codeXHR.open('GET', 'sysprog.js', true);
+                codeXHR.onload = function() {
+                var code = codeXHR.responseText;
+                var blob = new Blob([code], {type: 'text/javascript'});
+                codeXHR = null;
+                var src = URL.createObjectURL(blob);
+                var script = document.createElement('script');
+                script.src = URL.createObjectURL(blob);
+                script.onload = function() {
+                    URL.revokeObjectURL(script.src);
+                };
+                document.body.appendChild(script);
+                }
+                codeXHR.send(null);
+            };
+            xhr.send(null);
+        </script>
         <script type="text/javascript">
             function compile() {
                 console.log("Compiling...");

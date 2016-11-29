@@ -35,25 +35,25 @@ OBJSFORPARSERLIB =  \
 
 # linken der Object-files under shared libraries
 #makeTestScanner: $(OBJDIR)/Scanner.o $(OBJDIR)/TestScanner.o
-#	em++ -g $(OBJDIR)/Scanner.o $(OBJDIR)/TestScanner.o -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
+#	em++ -g4 $(OBJDIR)/Scanner.o $(OBJDIR)/TestScanner.o -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
 #
 #
 #
 ## compilieren der source-files
 #$(OBJDIR)/Scanner.o :  $(SRCDIR)/Scanner.cpp
 #	@echo "em++ $*.cpp"
-#	em++ -g  -c -Wall  -o $(OBJDIR)/Scanner.o  $(SRCDIR)/Scanner.cpp
+#	em++ -g4  -c -Wall  -o $(OBJDIR)/Scanner.o  $(SRCDIR)/Scanner.cpp
 #
 #$(OBJDIR)/TestScanner.o :  $(SRCDIR)/TestScanner.cpp
 #	@echo "em++ $*.cpp"
-#	em++ -g  -c -Wall  -o $(OBJDIR)/TestScanner.o  $(SRCDIR)/TestScanner.cpp
+#	em++ -g4  -c -Wall  -o $(OBJDIR)/TestScanner.o  $(SRCDIR)/TestScanner.cpp
 #
 
 
 
 #Variante  mit guten Kenntnissen
 makeTestParser: $(OBJS)
-	em++ -g $^ \
+	em++ -g4 $^ \
 	../Automat/lib/Automat.o \
 	../Automat/lib/Lexem.o \
 	../Automat/lib/State.o \
@@ -81,7 +81,7 @@ makeTestParser: $(OBJS)
 
 $(OBJDIR)/%.o :  $(SRCDIR)/%.cpp
 	@echo "em++ $*.cpp"
-	em++ -g  -c -Wall  -o $@  $<
+	em++ -g4  -c -Wall  -o $@  $<
 
 #
 # $@ name des object files
@@ -107,5 +107,5 @@ ParserLib:$(OBJSFORPARSERLIB)
 $(LIBDIR)/%.o :  $(SRCDIR)/%.cpp
 	@mkdir -p `dirname $(OBJDIR)/$*.o`
 	@echo "em++ $*.cpp"
-	em++ -g  -c -fPIC  -o $@  $<
+	em++ -g4  -c -fPIC  -o $@  $<
 

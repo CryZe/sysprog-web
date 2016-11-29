@@ -4,14 +4,15 @@ extern crate libc;
 #[macro_use]
 extern crate lazy_static;
 
+mod read;
+
 use libc::c_char;
 use std::ffi::CStr;
 use std::collections::HashMap;
-use std::io;
 use std::sync::Mutex;
 use std::fmt::{self, Write};
 
-type RegSize = i32;
+type RegSize = i64;
 
 #[derive(Debug)]
 enum Instruction<'a> {
@@ -93,12 +94,18 @@ fn parse_asm(src: &str) -> Result<Vec<Instruction>, String> {
             "AND" => AND,
             "EQU" => EQU,
             "NOT" => NOT,
-            "LA" => LA(src.next().ok_or("Expected LA argument.")?),
+            "LA" => {
+                let variable = src.next().ok_or("Expected LA variable.")?;
+                if !variable.starts_with('$') {
+                    return Err("LA variable doesn't start with $.".into());
+                }
+                LA(variable)
+            }
             "LC" => {
                 LC(src.next()
                     .ok_or("Expected LC argument.")?
                     .parse()
-                    .map_err(|_| "Failed to parse LC argument.")?)
+                    .map_err(|_| "Failed to parse LC argument as number.")?)
             }
             "LV" => LV,
             "STR" => STR,
@@ -106,18 +113,23 @@ fn parse_asm(src: &str) -> Result<Vec<Instruction>, String> {
             "REA" => REA,
             "JMP" => {
                 let label = src.next().ok_or("Expected JMP label.")?;
-                assert!(label.starts_with('#'), "JMP label doesn't start with #.");
+                if !label.starts_with('#') {
+                    return Err("JMP label doesn't start with #.".into());
+                }
                 JMP(label)
             }
             "JIN" => {
                 let label = src.next().ok_or("Expected JIN label.")?;
-                assert!(label.starts_with('#'), "JIN label doesn't start with #.");
+                if !label.starts_with('#') {
+                    return Err("JIN label doesn't start with #.".into());
+                }
                 JIN(label)
             }
             "DS" => {
                 let variable = src.next().ok_or("Expected DS variable.")?;
-                assert!(variable.starts_with('$'),
-                        "DS variable doesn't start with $.");
+                if !variable.starts_with('$') {
+                    return Err("DS variable doesn't start with $.".into());
+                }
                 let count = src.next()
                     .ok_or("Expected DS variable count.")?
                     .parse()
@@ -127,7 +139,7 @@ fn parse_asm(src: &str) -> Result<Vec<Instruction>, String> {
             "NOP" => NOP,
             "STP" => STP,
             label if label.starts_with('#') => Label(label),
-            o => panic!("Unknown opcode {}", o),
+            o => return Err(format!("Unknown opcode {}.", o)),
         };
         instructions.push(instruction);
     }
@@ -152,7 +164,7 @@ fn execute(code: &[Instruction], output: &mut String) -> Result<(), String> {
     let label_positions = find_label_positions(code);
     let mut variable_pointers = HashMap::new();
     let mut stack = Vec::<RegSize>::new();
-    let mut instruction_ptr = code.iter();
+    let mut instruction_ptr = code.iter().peekable();
 
     while let Some(instruction) = instruction_ptr.next() {
         match *instruction {
@@ -189,7 +201,7 @@ fn execute(code: &[Instruction], output: &mut String) -> Result<(), String> {
             AND => {
                 let a = stack.pop().ok_or("Stack is empty.")?;
                 let b = stack.pop().ok_or("Stack is empty.")?;
-                stack.push(if (b != 0) && (a != 0) { 1 } else { 0 });
+                stack.push(if b != 0 && a != 0 { 1 } else { 0 });
             }
             NOT => {
                 let a = stack.pop().ok_or("Stack is empty.")?;
@@ -204,35 +216,42 @@ fn execute(code: &[Instruction], output: &mut String) -> Result<(), String> {
             }
             LV => {
                 let ptr = stack.pop().ok_or("Stack is empty.")?;
-                let value = stack[ptr as usize];
+                let value = *stack.get(ptr as usize).ok_or("LV pointer out of bounds.")?;
                 stack.push(value);
             }
             STR => {
                 let ptr = stack.pop().ok_or("Stack is empty.")?;
                 let value = stack.pop().ok_or("Stack is empty.")?;
-                stack[ptr as usize] = value;
+                let reference = stack.get_mut(ptr as usize).ok_or("STR pointer out of bounds.")?;
+                *reference = value;
             }
             PRI => {
                 let a = stack.pop().ok_or("Stack is empty.")?;
                 writeln!(output, "{}", a).unwrap();
             }
             REA => {
-                println!("Select Number:");
-                let mut buffer = String::new();
-                io::stdin().read_line(&mut buffer).unwrap();
-                let value =
-                    buffer.trim().parse().map_err(|_| "Couldn't parse user input as number.")?;
+                let buf;
+                let text = if let Some(&&LA(variable)) = instruction_ptr.peek() {
+                    buf = format!("Choose {}:", &variable[1..]);
+                    &buf
+                } else {
+                    "Choose Number:"
+                };
+                let buffer = read::prompt(text, "");
+                let value = buffer.trim()
+                    .parse()
+                    .map_err(|e| format!("Couldn't parse user input as number: {}.", e))?;
                 stack.push(value);
             }
             JMP(label) => {
                 let pos = *label_positions.get(label).ok_or("Couldn't find label to jump to.")?;
-                instruction_ptr = code[pos..].iter();
+                instruction_ptr = code[pos..].iter().peekable();
             }
             JIN(label) => {
                 let expression = stack.pop().ok_or("Stack is empty.")?;
                 if expression == 0 {
                     let pos = *label_positions.get(label).ok_or("Couldn't find label to jump to.")?;
-                    instruction_ptr = code[pos..].iter();
+                    instruction_ptr = code[pos..].iter().peekable();
                 }
             }
             DS(variable, count) => {
@@ -250,11 +269,12 @@ fn execute(code: &[Instruction], output: &mut String) -> Result<(), String> {
     Ok(())
 }
 
+lazy_static! {
+    static ref OUTPUT: Mutex<String> = Mutex::new(String::new());
+}
+
 #[no_mangle]
 pub unsafe extern "C" fn format_asm(asm: *const c_char) -> *const c_char {
-    lazy_static! {
-        static ref OUTPUT: Mutex<String> = Mutex::new(String::new());
-    }
     let mut output = OUTPUT.lock().unwrap();
 
     output.clear();
@@ -274,9 +294,6 @@ pub unsafe extern "C" fn format_asm(asm: *const c_char) -> *const c_char {
 
 #[no_mangle]
 pub unsafe extern "C" fn interpret(asm: *const c_char) -> *const c_char {
-    lazy_static! {
-        static ref OUTPUT: Mutex<String> = Mutex::new(String::new());
-    }
     let mut output = OUTPUT.lock().unwrap();
 
     output.clear();

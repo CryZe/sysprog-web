@@ -452,9 +452,9 @@ void Statement5::makeCode(ostringstream &out, Symboltable *symboltable){
 	out<<" JIN "<<"#"<<"if"<<lable1;
 	node[1]->makeCode(out,symboltable);
 	out<<" JMP "<<"#"<<"if"<<lable2;
-	out<<"#"<<"if"<<lable1<<" NOP ";
+	out<<" #"<<"if"<<lable1<<" NOP ";
 	node[2]->makeCode(out,symboltable);
-	out<<"#"<<"if"<<lable2<<" NOP ";
+	out<<" #"<<"if"<<lable2<<" NOP ";
 }
 
 /*

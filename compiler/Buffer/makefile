@@ -17,7 +17,7 @@ SHAREDLIB = ../sharedlib
 # Linken der Object-files
 
 makeTestBuffer: BufferTarget 	TestBufferTarget
-	em++ -g -pthread $(OBJDIR)/Buffer.o 	$(OBJDIR)/TestBuffer.o   -o $(BINDIR)/BufferTest
+	em++ -g4 -pthread $(OBJDIR)/Buffer.o 	$(OBJDIR)/TestBuffer.o   -o $(BINDIR)/BufferTest
 
 
 # compilieren der Source-files
@@ -28,7 +28,7 @@ BufferTarget :  $(SRCDIR)/Buffer.cpp $(SRCDIR)/Buffer.h
 #TestBuffer.o ist abhaengig von TestBuffer.cpp und Buffer.h
 TestBufferTarget :  $(SRCDIR)/TestBuffer.cpp $(SRCDIR)/Buffer.h
 	@echo "em++ $*.cpp"
-	em++ -g  -c -Wall  -o $(OBJDIR)/TestBuffer.o  $(SRCDIR)/TestBuffer.cpp
+	em++ -g4  -c -Wall  -o $(OBJDIR)/TestBuffer.o  $(SRCDIR)/TestBuffer.cpp
 
 
 
@@ -50,5 +50,5 @@ BufferLib: BufferLibTarget
 
 
 BufferLibTarget :  $(SRCDIR)/Buffer.cpp $(SRCDIR)/Buffer.h
-	em++ -g  -c -fPIC  -o $(LIBDIR)/Buffer.o  $(SRCDIR)/Buffer.cpp
+	em++ -g4  -c -fPIC  -o $(LIBDIR)/Buffer.o  $(SRCDIR)/Buffer.cpp
 

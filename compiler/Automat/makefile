@@ -8,7 +8,7 @@
 # -o --> name des output-files
 
 makeTestAutomat: AutomatTarget TestAutomatTarget StateTarget LexemTarget
-	em++ -g debug/Automat.o debug/TestAutomat.o debug/State.o debug/Lexem.o -o debug/AutomatTest
+	em++ -g4 debug/Automat.o debug/TestAutomat.o debug/State.o debug/Lexem.o -o debug/AutomatTest
 
 
 # compilieren des Files Automat.cpp zu Automat.o,
@@ -18,19 +18,19 @@ makeTestAutomat: AutomatTarget TestAutomatTarget StateTarget LexemTarget
 # -Wall --> alle meldungen erzeugen
 
 AutomatTarget :  src/Automat.cpp src/Automat.h
-	em++ -g  -c -Wall src/Automat.cpp -o debug/Automat.o
+	em++ -g4  -c -Wall src/Automat.cpp -o debug/Automat.o
 
 
 # TestAutomat.o ist abhängig von src/TestAutomat.cpp und src/Automat.h
 TestAutomatTarget :  src/TestAutomat.cpp src/Automat.h
-	em++ -g  -c -Wall src/TestAutomat.cpp  -o debug/TestAutomat.o
+	em++ -g4  -c -Wall src/TestAutomat.cpp  -o debug/TestAutomat.o
 
 # Test Build state.cpp
 StateTarget :  src/State.cpp src/State.h
-	em++ -g  -c -Wall src/State.cpp  -o debug/State.o
+	em++ -g4  -c -Wall src/State.cpp  -o debug/State.o
 
 LexemTarget :  src/Lexem.cpp src/Lexem.h
-	em++ -g  -c -Wall src/Lexem.cpp  -o debug/Lexem.o
+	em++ -g4  -c -Wall src/Lexem.cpp  -o debug/Lexem.o
 
 
 # loeschen aller files im verzeichnis obj und lib und neu bauen
@@ -51,11 +51,11 @@ AutomatLib: AutomatLibTarget StateLibTarget LexemLibTarget
 
 # compilieren des Files Automat.cpp zu Automat.o mit dem Flag -fPIC (Position Independant Code)
 AutomatLibTarget :  src/Automat.cpp src/Automat.h
-	em++ -g  -c -fPIC  src/Automat.cpp -o lib/Automat.o
+	em++ -g4  -c -fPIC  src/Automat.cpp -o lib/Automat.o
 
 StateLibTarget :  src/State.cpp src/State.h
-	em++ -g  -c -fPIC src/State.cpp  -o lib/State.o
+	em++ -g4  -c -fPIC src/State.cpp  -o lib/State.o
 
 LexemLibTarget :  src/Lexem.cpp src/Lexem.h
-	em++ -g  -c -fPIC src/Lexem.cpp  -o lib/Lexem.o
+	em++ -g4  -c -fPIC src/Lexem.cpp  -o lib/Lexem.o
 
