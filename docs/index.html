@@ -15,11 +15,20 @@
             }
         </style>
         <script type='text/javascript'>
+            isCompiling = false;
+            function printErr(e) {
+                if (isCompiling) {
+                    document.getElementById("result").value += e + "\n";
+                } else {
+                    console.warn(e);
+                }
+            }
+
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'sysprog.wasm', true);
             xhr.responseType = 'arraybuffer';
             xhr.onload = function() {
-                var config = { wasmBinary: xhr.response };
+                var config = { wasmBinary: xhr.response, printErr: printErr };
                 var codeXHR = new XMLHttpRequest();
                 codeXHR.open('GET', 'sysprog.js', true);
                 codeXHR.onload = function() {
@@ -41,20 +50,21 @@
                 codeXHR.send(null);
             };
             xhr.send(null);
-        </script>
-        <script type="text/javascript">
+
             function compile() {
                 console.log("Compiling...");
                 var code = document.getElementById("code").value;
                 try {
+                    isCompiling = true;
+                    document.getElementById("result").value = "";
                     var asm = parse(code);
                     asm = format(asm);
                     document.getElementById("asm").value = asm;
-                    document.getElementById("result").value = "Compilation succeeded.";
                 } catch (e) {
+                    printErr(e);
                     document.getElementById("asm").value = "";
-                    document.getElementById("result").value = "Compilation failed.";
                 }
+                isCompiling = false;
             }
 
             function runASM() {
